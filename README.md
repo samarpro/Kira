@@ -1,16 +1,30 @@
-# React + Vite
+# BalanceBridge (Tranquil Focus)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BalanceBridge is a student-focused wellbeing and scheduling experience that helps balance study demands with shift work, recovery time, and focus routines. The app combines onboarding, goal setting, calendar planning, shift tracking, and wellbeing tools in a single flow.
 
-Currently, two official plugins are available:
+## Project Scope
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The current scope covers a multi-page React UI that prototypes the end-to-end experience, including:
 
-## React Compiler
+- Onboarding flow with welcome, verification, goal definition, and calendar connection.
+- Weekly dashboard view of upcoming workload and balance indicators.
+- Shift management via roster upload and manual shift entry.
+- Shift impact checking with status trends.
+- Calendar planning view for time blocking and review.
+- Focus Mode and Exam Protection Mode experiences.
+- Wellbeing tracking and guidance.
+- User settings for preferences and configuration.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React
+- Vite
+- React Router
+- Tailwind CSS
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
