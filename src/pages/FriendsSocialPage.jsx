@@ -1,3 +1,5 @@
+import { useAppStore } from '../context/AppStore'
+
 const quickActions = [
   {
     title: 'Anonymous Break Match',
@@ -39,6 +41,12 @@ const skillSteps = [
 ]
 
 const FriendsSocialPage = () => {
+  const {
+    state: {
+      goals: { socialGoal },
+    },
+  } = useAppStore()
+  const goalLabel = socialGoal === 1 ? 'chat' : 'chats'
   return (
     <div className="min-h-screen bg-background text-on-background px-6 py-12 md:px-12">
       <div className="max-w-6xl mx-auto space-y-10">
@@ -108,7 +116,7 @@ const FriendsSocialPage = () => {
             <div className="bg-secondary-container/20 rounded-3xl p-6 border border-secondary-container/40 space-y-3">
               <h3 className="font-label-lg text-on-secondary-container">Weekly Social Goal</h3>
               <p className="text-body-sm text-on-secondary-container">
-                Aim for one friendly chat or a short study break this week.
+                Aim for {socialGoal} friendly {goalLabel} or a short study break this week.
               </p>
               <button className="px-4 py-2 rounded-full bg-secondary text-white font-label-md" type="button">
                 Log a Meetup

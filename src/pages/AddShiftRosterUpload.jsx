@@ -1,4 +1,9 @@
+import { useAppStore } from '../context/AppStore'
+
 const AddShiftRosterUpload = () => {
+  const {
+    state: { shifts },
+  } = useAppStore()
   return (
     <div className="bg-surface font-body-md text-on-surface">
       <div className="flex min-h-screen">
@@ -115,13 +120,8 @@ const AddShiftRosterUpload = () => {
                   <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-sm">4 Shifts Found</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { date: 'Jul 12', title: 'Night Shift • Emergency Dept', time: '22:00 — 06:00 (8h)' },
-                    { date: 'Jul 14', title: 'Afternoon Shift • Ward 4B', time: '14:00 — 22:00 (8h)' },
-                    { date: 'Jul 15', title: 'Morning Shift • Ward 4B', time: '06:00 — 14:00 (8h)' },
-                    { date: 'Jul 16', title: 'Morning Shift • Ward 4B', time: '06:00 — 14:00 (8h)' },
-                  ].map((shift) => (
-                    <div key={shift.date} className="bg-white p-4 rounded-xl border border-outline-variant hover:border-primary/50 transition-colors flex items-center justify-between group">
+                  {shifts.map((shift) => (
+                    <div key={shift.id} className="bg-white p-4 rounded-xl border border-outline-variant hover:border-primary/50 transition-colors flex items-center justify-between group">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-surface-container rounded-lg flex flex-col items-center justify-center text-on-surface">
                           <span className="text-[10px] uppercase font-bold text-slate-500 leading-none">{shift.date.split(' ')[0]}</span>

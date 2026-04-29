@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useAppStore } from '../context/AppStore'
 
 const formatTime = (totalSeconds) => {
   const minutes = Math.floor(totalSeconds / 60)
@@ -7,27 +8,28 @@ const formatTime = (totalSeconds) => {
 }
 
 const FocusModePage = () => {
-  const [seconds, setSeconds] = useState(25 * 60)
-  const [isRunning, setIsRunning] = useState(true)
+  const {
+    state: {
+      focus: { secondsRemaining, isRunning },
+    },
+    actions: { setFocusRunning, setFocusSeconds, resetFocusTimer },
+  } = useAppStore()
 
   useEffect(() => {
     if (!isRunning) return undefined
     const timer = setInterval(() => {
-      setSeconds((prev) => (prev > 0 ? prev - 1 : 0))
+      setFocusSeconds(secondsRemaining > 0 ? secondsRemaining - 1 : 0)
     }, 1000)
     return () => clearInterval(timer)
-  }, [isRunning])
+  }, [isRunning, secondsRemaining, setFocusSeconds])
 
   useEffect(() => {
-    if (seconds === 0) setIsRunning(false)
-  }, [seconds])
+    if (secondsRemaining === 0) setFocusRunning(false)
+  }, [secondsRemaining, setFocusRunning])
 
-  const handleStart = () => setIsRunning(true)
-  const handlePause = () => setIsRunning(false)
-  const handleReset = () => {
-    setSeconds(25 * 60)
-    setIsRunning(true)
-  }
+  const handleStart = () => setFocusRunning(true)
+  const handlePause = () => setFocusRunning(false)
+  const handleReset = () => resetFocusTimer()
 
   return (
     <div className="min-h-screen bg-background text-on-background px-6 py-12 md:px-12 flex items-center justify-center">
@@ -36,7 +38,7 @@ const FocusModePage = () => {
           <h1 className="font-h1 text-h1 text-on-surface">Focus Mode</h1>
           <p className="font-body-md text-on-surface-variant">Start the timer and keep distractions low.</p>
         </div>
-        <div className="text-6xl font-h1 text-primary">{formatTime(seconds)}</div>
+        <div className="text-6xl font-h1 text-primary">{formatTime(secondsRemaining)}</div>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button className="px-6 py-3 rounded-full bg-secondary-container text-on-secondary-container font-label-md" onClick={handlePause} type="button">
             Pause

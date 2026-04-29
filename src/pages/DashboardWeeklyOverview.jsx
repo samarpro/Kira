@@ -1,9 +1,13 @@
-import { useState } from 'react'
-import { useUser } from '../context/UserContext'
+import { useAppStore } from '../context/AppStore'
 
 const DashboardWeeklyOverview = () => {
-  const { name } = useUser()
-  const [showProfile, setShowProfile] = useState(false)
+  const {
+    state: {
+      profile: { name },
+      ui: { showProfile },
+    },
+    actions: { setShowProfile },
+  } = useAppStore()
   return (
     <div className="font-body-md bg-background text-on-background min-h-screen">
       <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 border-r border-slate-100 bg-white shadow-xl shadow-sky-900/5 z-50 py-8 px-4 gap-y-2 text-sm font-medium">
@@ -94,7 +98,7 @@ const DashboardWeeklyOverview = () => {
               <button
                 className="h-8 w-8 rounded-full overflow-hidden border-2 border-primary-container shadow-sm"
                 type="button"
-                onClick={() => setShowProfile((prev) => !prev)}
+                onClick={() => setShowProfile(!showProfile)}
               >
                 <img
                   alt="Student Profile"

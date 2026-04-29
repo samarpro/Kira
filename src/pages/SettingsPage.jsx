@@ -1,8 +1,13 @@
 import { useState } from 'react'
-import { useUser } from '../context/UserContext'
+import { useAppStore } from '../context/AppStore'
 
 const SettingsPage = () => {
-  const { name, setName } = useUser()
+  const {
+    state: {
+      profile: { name },
+    },
+    actions: { setName },
+  } = useAppStore()
   const [draft, setDraft] = useState(name)
   const [saved, setSaved] = useState(false)
 

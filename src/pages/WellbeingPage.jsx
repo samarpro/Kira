@@ -1,29 +1,32 @@
 import { useMemo, useState } from 'react'
-
-const defaultTodos = [
-  { id: 1, label: '10 min meditation', done: false },
-  { id: 2, label: 'Evening journaling', done: false },
-]
+import { useAppStore } from '../context/AppStore'
 
 const WellbeingPage = () => {
-  const [todos, setTodos] = useState(defaultTodos)
+  const {
+    state: {
+      wellbeing: { todos },
+      metrics: { workHours, focusHours },
+      goals: { workHours: goalWork, focusHours: goalFocus },
+    },
+    actions: { addWellbeingTodo, toggleWellbeingTodo },
+  } = useAppStore()
   const [newTask, setNewTask] = useState('')
 
   const totals = useMemo(
-    () => ({ work: 18, focus: 12, goalWork: 24, goalFocus: 15 }),
-    [],
+    () => ({ work: workHours, focus: focusHours, goalWork, goalFocus }),
+    [workHours, focusHours, goalWork, goalFocus],
   )
 
   const handleAdd = (event) => {
     event.preventDefault()
     const trimmed = newTask.trim()
     if (!trimmed) return
-    setTodos((prev) => [...prev, { id: Date.now(), label: trimmed, done: false }])
+    addWellbeingTodo(trimmed)
     setNewTask('')
   }
 
   const toggleTodo = (id) => {
-    setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
+    toggleWellbeingTodo(id)
   }
 
   return (

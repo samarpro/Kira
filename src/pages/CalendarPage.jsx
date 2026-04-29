@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import './calendar.css'
+import { useAppStore } from '../context/AppStore'
 
 const CalendarPage = () => {
-  const [date, setDate] = useState(new Date())
-  const [events, setEvents] = useState([
-    { id: 1, title: 'Work Shift', date: new Date() },
-    { id: 2, title: 'Study Focus', date: new Date() },
-  ])
+  const {
+    state: {
+      calendar: { selectedDate, events },
+    },
+    actions: { setCalendarDate, addCalendarEvent },
+  } = useAppStore()
+  const [date, setDate] = useState(() => new Date(selectedDate))
   const [newTitle, setNewTitle] = useState('')
   const [newDate, setNewDate] = useState(() => new Date().toISOString().split('T')[0])
 
@@ -16,12 +19,26 @@ const CalendarPage = () => {
     event.preventDefault()
     if (!newTitle.trim()) return
     const dateValue = new Date(`${newDate}T00:00:00`)
-    setEvents((prev) => [...prev, { id: Date.now(), title: newTitle.trim(), date: dateValue }])
+    addCalendarEvent({ id: Date.now(), title: newTitle.trim(), date: dateValue.toISOString() })
     setNewTitle('')
   }
 
-  const eventsForSelected = events.filter(
-    (evt) => evt.date.toDateString() === date.toDateString(),
+  const eventsForSelected = useMemo(
+    () =>
+      events.filter(
+        (evt) => new Date(evt.date).toDateString() === date.toDateString(),
+      ),
+    [events, date],
+  )
+
+  const handleDateChange = (nextDate) => {
+    setDate(nextDate)
+    setCalendarDate(nextDate.toISOString())
+  }
+
+  const eventsWithDates = useMemo(
+    () => events.map((evt) => ({ ...evt, date: new Date(evt.date) })),
+    [events],
   )
 
   return (
@@ -45,11 +62,13 @@ const CalendarPage = () => {
           <section className="lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-slate-100/50">
             <div className="calendar-shell">
             <Calendar
-              onChange={setDate}
+              onChange={handleDateChange}
               value={date}
               className="w-full border-0 text-sm"
               tileClassName={({ date: tileDate }) => {
-                const hasEvent = events.some((evt) => evt.date.toDateString() === tileDate.toDateString())
+                const hasEvent = eventsWithDates.some(
+                  (evt) => evt.date.toDateString() === tileDate.toDateString(),
+                )
                 return hasEvent ? 'rounded-xl ring-1 ring-primary/30' : 'rounded-xl'
               }}
             />
@@ -103,7 +122,7 @@ const CalendarPage = () => {
                     <div key={evt.id} className="flex items-center justify-between">
                       <div>
                         <p className="font-label-md text-on-surface">{evt.title}</p>
-                        <p className="text-body-sm text-on-surface-variant">{evt.date.toDateString()}</p>
+                        <p className="text-body-sm text-on-surface-variant">{new Date(evt.date).toDateString()}</p>
                       </div>
                       <span className="text-secondary font-label-sm">Event</span>
                     </div>
