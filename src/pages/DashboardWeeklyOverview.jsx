@@ -24,6 +24,10 @@ const DashboardWeeklyOverview = () => {
             <span className="material-symbols-outlined">self_care</span>
             <span>Wellbeing</span>
           </a>
+          <a className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-50 hover:text-sky-500 transition-all" href="/friends-social">
+            <span className="material-symbols-outlined">groups</span>
+            <span>Friends & Social</span>
+          </a>
           <a className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-50 hover:text-sky-500 transition-all" href="/settings">
             <span className="material-symbols-outlined">workspace_premium</span>
             <span>Achievements</span>

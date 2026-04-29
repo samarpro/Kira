@@ -12,6 +12,7 @@ import CalendarPage from './pages/CalendarPage'
 import WellbeingPage from './pages/WellbeingPage'
 import FocusModePage from './pages/FocusModePage'
 import SettingsPage from './pages/SettingsPage'
+import FriendsSocialPage from './pages/FriendsSocialPage'
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/dashboard-weekly-overview" element={<DashboardWeeklyOverview />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/wellbeing" element={<WellbeingPage />} />
+        <Route path="/friends-social" element={<FriendsSocialPage />} />
         <Route path="/focus-mode" element={<FocusModePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/add-shift-roster-upload" element={<AddShiftRosterUpload />} />
