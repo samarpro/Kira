@@ -85,7 +85,7 @@ export function WellbeingPanel() {
                 </Button>
             </div>
 
-            <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 lg:grid-cols-3 lg:grid-rows-2">
+            <div className="grid min-h-0 flex-1 grid-cols-1 items-start gap-3 justify-items-center md:grid-cols-2 md:items-stretch md:justify-items-stretch lg:grid-cols-3 lg:grid-rows-2">
                 <GlassRadialTile
                     title={t("wellbeing.ringStudyTitle")}
                     subtitle={t("wellbeing.ringStudySubtitle")}
@@ -137,7 +137,10 @@ export function WellbeingPanel() {
                     ariaLabel={`${t("wellbeing.ringMonthTitle")}: ${formatMinutesAsHoursMinutes(monthShiftTotalMinutes)} of ${formatMinutesAsHoursMinutes(MONTH_REFERENCE_MINUTES)}`}
                 />
 
-                <section className={cx(tasksGlass, "min-h-0 flex-1")} aria-label={t("wellbeing.tasksTileTitle")}>
+                <section
+                    className={cx(tasksGlass, "w-full max-w-sm min-h-0 flex-1 justify-self-center md:max-w-none md:justify-self-auto lg:self-stretch")}
+                    aria-label={t("wellbeing.tasksTileTitle")}
+                >
                     <div className="shrink-0">
                         <h3 className="text-xs font-semibold uppercase tracking-wide text-quaternary">{t("wellbeing.tasksTileTitle")}</h3>
                         <p className="mt-0.5 text-xs text-tertiary">{t("wellbeing.tasksTileSubtitle")}</p>

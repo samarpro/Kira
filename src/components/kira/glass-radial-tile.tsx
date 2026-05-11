@@ -1,7 +1,7 @@
 import { cx } from "@/utils/cx";
 
 const glassTile =
-    "flex min-h-0 flex-col gap-2 rounded-2xl border border-white/25 bg-gradient-to-br from-white/15 to-white/5 p-4 shadow-lg backdrop-blur-xl dark:border-white/10 dark:from-white/[0.12] dark:to-white/[0.05]";
+    "box-border flex w-fit max-w-full min-w-0 flex-col gap-2 justify-self-center rounded-2xl border border-white/25 bg-gradient-to-br from-white/15 to-white/5 p-4 shadow-lg backdrop-blur-xl dark:border-white/10 dark:from-white/[0.12] dark:to-white/[0.05] md:w-full md:justify-self-auto";
 
 const R = 40;
 const CIRC = 2 * Math.PI * R;
@@ -44,7 +44,7 @@ export function GlassRadialTile({
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-quaternary">{title}</h3>
                 <p className="mt-0.5 line-clamp-2 text-xs text-tertiary">{subtitle}</p>
             </div>
-            <div className="relative mx-auto flex aspect-square w-[min(100%,7.5rem)] shrink-0 items-center justify-center">
+            <div className="relative mx-auto mb-4 flex aspect-square w-[11.5rem] max-w-full shrink-0 items-center justify-center">
                 <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden>
                     <circle cx="50" cy="50" r={R} fill="none" strokeWidth="8" className="stroke-border-secondary/80" />
                     <circle

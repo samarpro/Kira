@@ -16,7 +16,7 @@ import {
 } from "@/utils/schedule-aggregates";
 import { effectiveDeadlineIso, sortedIncompleteByAttention } from "@/utils/next-schedule-action";
 import { isoFromDate } from "@/utils/schedule-time";
-import { t } from "@/i18n/strings";
+import { t, tWellbeingWelcome } from "@/i18n/strings";
 
 interface DashboardPanelProps {
     onOpenTab: (tab: string) => void;
@@ -78,6 +78,7 @@ export function DashboardPanel({ onOpenTab }: DashboardPanelProps) {
     const weeklyStudyGoalMinutes = useKiraStore((s) => s.weeklyStudyGoalMinutes);
     const fortnightWorkLimitHours = useKiraStore((s) => s.fortnightWorkLimitHours);
     const openLimitsEditor = useKiraStore((s) => s.openLimitsEditor);
+    const displayName = useKiraStore((s) => s.userProfile.displayName);
 
     const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
 
@@ -140,8 +141,13 @@ export function DashboardPanel({ onOpenTab }: DashboardPanelProps) {
         );
     };
 
+    const welcomeHeading = tWellbeingWelcome(displayName);
+
     return (
         <div className="flex flex-col gap-8">
+            <header className="shrink-0">
+                <h2 className="text-xl font-semibold text-secondary">{welcomeHeading}</h2>
+            </header>
             <div className="grid gap-6 lg:grid-cols-2">
                 <section className="rounded-xl ring-1 ring-secondary bg-primary_alt p-5">
                     <div className="flex flex-wrap items-start justify-between gap-2">
