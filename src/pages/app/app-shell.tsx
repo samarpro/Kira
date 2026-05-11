@@ -26,8 +26,6 @@ function glassNavTabClass({ isSelected, isFocusVisible, isHovered }: TabRenderPr
 
 function AppTabs() {
     const [tab, setTab] = useState("dashboard");
-    const limitsConfigured = useKiraStore((s) => s.userProfile.limitsConfigured);
-    const limitsEditorOpen = useKiraStore((s) => s.limitsEditorOpen);
 
     return (
         <Tabs selectedKey={tab} onSelectionChange={(k) => k != null && setTab(String(k))} className="flex h-dvh min-h-0 flex-col overflow-hidden bg-primary">
@@ -68,12 +66,6 @@ function AppTabs() {
                 </div>
             </header>
 
-            <LimitsSetupModal
-                isOpen={!limitsConfigured || limitsEditorOpen}
-                isRequired={!limitsConfigured}
-                onOpenChange={() => undefined}
-            />
-
             <main className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col overflow-hidden px-4 py-6 md:px-8 md:py-8">
                 <Tabs.Panel id="dashboard" className="outline-hidden min-h-0 flex-1 overflow-y-auto">
                     <DashboardPanel onOpenTab={(id) => setTab(id)} />
@@ -92,8 +84,23 @@ function AppTabs() {
     );
 }
 
-export function AppShell() {
+function AppShellBody() {
+    const limitsConfigured = useKiraStore((s) => s.userProfile.limitsConfigured);
+    const limitsEditorOpen = useKiraStore((s) => s.limitsEditorOpen);
+
     return (
-        <AppTabs />
+        <>
+            <AppTabs />
+            {/* Outside <Tabs>: RAC Tabs uses CollectionBuilder on all children; a <dialog> there crashes the app. */}
+            <LimitsSetupModal
+                isOpen={!limitsConfigured || limitsEditorOpen}
+                isRequired={!limitsConfigured}
+                onOpenChange={() => undefined}
+            />
+        </>
     );
+}
+
+export function AppShell() {
+    return <AppShellBody />;
 }
