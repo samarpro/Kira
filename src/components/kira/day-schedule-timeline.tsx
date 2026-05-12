@@ -8,6 +8,7 @@ import {
     startMinutesFromTimelineClick,
 } from "@/utils/schedule-time";
 import { t } from "@/i18n/strings";
+import { scheduleEntryBlockClass } from "@/utils/schedule-kind-styles";
 import { cx } from "@/utils/cx";
 
 export function entriesForIso(entries: ScheduleEntry[], iso: string): ScheduleEntry[] {
@@ -80,26 +81,15 @@ function EventBlocks({ entries, onEntryClick }: { entries: ScheduleEntry[]; onEn
                         disabled={!interactive}
                         onClick={() => onEntryClick?.(entry)}
                         className={cx(
-                            "absolute right-1 left-1 z-10 overflow-hidden rounded-lg px-2 py-1 text-left shadow-xs ring-1 ring-inset transition-colors duration-100 ease-linear",
-                            interactive && "cursor-pointer hover:brightness-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
+                            "absolute right-1 left-1 z-10 overflow-hidden rounded-lg px-2 py-1 text-left shadow-xs ring-inset transition-[filter,transform] duration-150 ease-out",
+                            interactive && "cursor-pointer hover:brightness-110 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:scale-[0.99]",
                             !interactive && "cursor-default",
-                            entry.completed
-                                ? "bg-success-solid ring-success-solid hover:bg-success-solid_hover"
-                                : entry.kind === "shift" && "bg-brand-secondary ring-brand-secondary",
-                            !entry.completed && entry.kind === "exam" && "bg-warning-secondary ring-warning-secondary",
-                            !entry.completed && entry.kind === "study" && "bg-success-secondary ring-success-secondary",
+                            scheduleEntryBlockClass(entry),
                         )}
                         style={{ top: `${topPct}%`, height: `${heightPct}%` }}
                     >
-                        <p
-                            className={cx(
-                                "line-clamp-2 text-xs font-semibold",
-                                entry.completed ? "text-white" : "text-secondary",
-                            )}
-                        >
-                            {entry.title}
-                        </p>
-                        <p className={cx("text-[10px] font-medium", entry.completed ? "text-white/90" : "text-tertiary")}>
+                        <p className={cx("line-clamp-2 text-xs font-semibold text-white")}>{entry.title}</p>
+                        <p className="text-[10px] font-medium text-white/90">
                             {formatHm(clampedStart)}–{formatHm(clampedEnd)} · {entryKindLabel(entry.kind)}
                             {entry.completed ? ` · ${t("calendar.editModal.doneSuffix")}` : ""}
                         </p>

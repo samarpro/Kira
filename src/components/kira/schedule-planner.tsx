@@ -3,7 +3,6 @@ import { parseDate } from "@internationalized/date";
 import type { DateValue } from "react-aria-components";
 import { ChevronLeft, ChevronRight } from "@untitledui/icons";
 import { Calendar } from "@/components/application/date-picker/calendar";
-import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import type { ScheduleEntry } from "@/components/kira/calendar-month";
@@ -11,6 +10,7 @@ import { DayColumn, DayScheduleTimeline, TimelineRulerColumn } from "@/component
 import { ScheduleEntryEditModal } from "@/components/kira/schedule-entry-modal";
 import { useCollisionGuardedAdd } from "@/hooks/use-collision-guarded-add";
 import { addDays, defaultStartMinutesForNewTaskOnDay, isoFromDate, startOfWeekMonday } from "@/utils/schedule-time";
+import { scheduleKindLegendSwatchClass } from "@/utils/schedule-kind-styles";
 import { t } from "@/i18n/strings";
 
 export type PlannerView = "day" | "week" | "month";
@@ -226,20 +226,20 @@ export function SchedulePlanner({ entries }: SchedulePlannerProps) {
             />
             {collisionModal}
 
-            <div className="mt-6 flex flex-wrap gap-2 border-t border-secondary pt-4">
-                <Badge type="pill-color" color="brand" size="sm">
-                    {t("calendar.legend.shift")}
-                </Badge>
-                <Badge type="pill-color" color="warning" size="sm">
-                    {t("calendar.legend.exam")}
-                </Badge>
-                <Badge type="pill-color" color="success" size="sm">
-                    {t("calendar.legend.study")}
-                </Badge>
-                <Badge type="pill-color" color="success" size="sm">
-                    {t("calendar.legend.completed")}
-                </Badge>
-            </div>
+            <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-secondary pt-4 text-xs text-tertiary">
+                <li className="flex items-center gap-1.5">
+                    <span className={scheduleKindLegendSwatchClass("shift")} /> {t("calendar.legend.shift")}
+                </li>
+                <li className="flex items-center gap-1.5">
+                    <span className={scheduleKindLegendSwatchClass("exam")} /> {t("calendar.legend.exam")}
+                </li>
+                <li className="flex items-center gap-1.5">
+                    <span className={scheduleKindLegendSwatchClass("study")} /> {t("calendar.legend.study")}
+                </li>
+                <li className="flex items-center gap-1.5">
+                    <span className="size-2 shrink-0 rounded-full bg-emerald-500 ring-1 ring-secondary" /> {t("calendar.legend.completed")}
+                </li>
+            </ul>
         </section>
     );
 }

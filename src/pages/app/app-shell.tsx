@@ -1,9 +1,26 @@
-import type { TabRenderProps } from "react-aria-components";
 import { useState } from "react";
-import { BarChartSquare02, Calendar as CalendarIcon, HeartRounded, Users01 } from "@untitledui/icons";
-import { Tabs } from "@/components/application/tabs/tabs";
+import {
+    BarChartSquare02,
+    Calendar as CalendarIcon,
+    HeartRounded,
+    Users01,
+    Menu02,
+    X as CloseIcon,
+    ChevronLeft,
+    ChevronRight,
+} from "@untitledui/icons";
+import {
+    Button as AriaButton,
+    Dialog as AriaDialog,
+    DialogTrigger as AriaDialogTrigger,
+    Modal as AriaModal,
+    ModalOverlay as AriaModalOverlay,
+} from "react-aria-components";
+import { Button } from "@/components/base/buttons/button";
 import { LimitsSetupModal } from "@/components/kira/limits-setup-modal";
+import { QuickAddFab } from "@/components/kira/quick-add-fab";
 import { ThemeToggle } from "@/components/kira/theme-toggle";
+import { FocusModeControl } from "@/components/kira/focus-mode-overlay";
 import { useKiraStore } from "@/stores/kira-store";
 import { t } from "@/i18n/strings";
 import { DashboardPanel } from "@/pages/app/dashboard-panel";
@@ -12,75 +29,273 @@ import { WellbeingPanel } from "@/pages/app/wellbeing-panel";
 import { EventsPanel } from "@/pages/app/events-panel";
 import { cx } from "@/utils/cx";
 
-function glassNavTabClass({ isSelected, isFocusVisible, isHovered }: TabRenderProps) {
+const navItems = [
+    { id: "dashboard" as const, icon: BarChartSquare02, labelKey: "app.nav.dashboard" as const },
+    { id: "calendar" as const, icon: CalendarIcon, labelKey: "app.nav.calendar" as const },
+    { id: "wellbeing" as const, icon: HeartRounded, labelKey: "app.nav.wellbeing" as const },
+    { id: "events" as const, icon: Users01, labelKey: "app.nav.events" as const },
+];
+
+type AppTabId = (typeof navItems)[number]["id"];
+
+const SIDEBAR_COLLAPSED_KEY = "kira-sidebar-collapsed";
+
+function readSidebarCollapsedFromStorage(): boolean {
+    if (typeof window === "undefined") return false;
+    try {
+        return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+    } catch {
+        return false;
+    }
+}
+
+function persistSidebarCollapsed(collapsed: boolean) {
+    try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
+    } catch {
+        /* ignore */
+    }
+}
+
+function appNavButtonClass(selected: boolean, density: "drawer" | "rail" | "rail-icon") {
     return cx(
-        "relative rounded-full px-4 py-2.5 font-semibold transition-[background-color,color,box-shadow] duration-200 ease-out max-md:min-h-11 max-md:flex-1 max-md:px-3",
-        !isSelected && "text-tertiary hover:text-secondary",
-        !isSelected && isHovered && "bg-white/15 dark:bg-white/10",
-        // Selected: flush inside the rail — no vertical pop (avoids awkward overlap with content)
-        isSelected &&
-            "bg-primary_alt text-brand-secondary shadow-[inset_0_1px_2px_rgba(255,255,255,0.55)] ring-1 ring-brand-secondary/30 ring-inset dark:bg-white/[0.09] dark:text-brand-secondary dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.08)] dark:ring-brand-secondary/40",
-        isFocusVisible && "outline-2 outline-offset-2 outline-focus-ring",
+        "w-full border shadow-xs transition duration-100 ease-linear",
+        density === "drawer" && "justify-start gap-3 rounded-xl px-4 py-3.5 text-lg font-semibold",
+        density === "rail" && "justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold",
+        density === "rail-icon" && "justify-center rounded-xl px-0 py-2.5 data-icon-only:min-w-0",
+        selected
+            ? "border-brand-secondary/35 bg-brand-primary_alt text-brand-secondary ring-1 ring-brand-secondary/25 ring-inset hover:bg-brand-primary_alt hover:text-brand-secondary_hover"
+            : "border-secondary_alt bg-primary hover:border-secondary hover:bg-secondary_alt",
     );
 }
 
-function AppTabs() {
-    const [tab, setTab] = useState("dashboard");
+function AppNavLinks({
+    tab,
+    onSelect,
+    variant,
+    closeDrawer,
+}: {
+    tab: AppTabId;
+    onSelect: (id: AppTabId) => void;
+    variant: "drawer" | "rail-expanded" | "rail-collapsed";
+    closeDrawer?: () => void;
+}) {
+    const drawer = variant === "drawer";
+    const collapsed = variant === "rail-collapsed";
 
     return (
-        <Tabs selectedKey={tab} onSelectionChange={(k) => k != null && setTab(String(k))} className="flex h-dvh min-h-0 flex-col overflow-hidden bg-primary">
-            <header className="sticky top-0 z-30 border-b border-white/25 bg-primary/55 pb-3 shadow-[0_12px_40px_-16px_rgba(15,23,42,0.2)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-black/35 dark:shadow-[0_14px_48px_-18px_rgba(0,0,0,0.55)] supports-[backdrop-filter]:bg-primary/45 supports-[backdrop-filter]:dark:bg-black/30">
-                <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 pt-4 md:flex-row md:items-center md:justify-between md:px-8">
-                    <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-brand-secondary drop-shadow-sm">{t("app.name")}</p>
-                        <p className="text-sm text-secondary/90 dark:text-tertiary">{t("app.tagline")}</p>
+        <nav className="flex flex-col gap-2" aria-label={t("app.menuTitle")}>
+            {navItems.map(({ id, icon: Icon, labelKey }) => {
+                const selected = tab === id;
+                const label = t(labelKey);
+                const handle = () => {
+                    onSelect(id);
+                    closeDrawer?.();
+                };
+
+                if (drawer) {
+                    return (
+                        <Button
+                            key={id}
+                            color="secondary"
+                            size="lg"
+                            className={appNavButtonClass(selected, "drawer")}
+                            iconLeading={<Icon data-icon aria-hidden className="size-6 shrink-0" />}
+                            onClick={handle}
+                            aria-current={selected ? "page" : undefined}
+                        >
+                            {label}
+                        </Button>
+                    );
+                }
+
+                if (collapsed) {
+                    return (
+                        <Button
+                            key={id}
+                            color="secondary"
+                            size="md"
+                            aria-label={label}
+                            className={appNavButtonClass(selected, "rail-icon")}
+                            iconLeading={<Icon data-icon aria-hidden className="size-5 shrink-0" />}
+                            onClick={handle}
+                            aria-current={selected ? "page" : undefined}
+                        />
+                    );
+                }
+
+                return (
+                    <Button
+                        key={id}
+                        color="secondary"
+                        size="md"
+                        className={appNavButtonClass(selected, "rail")}
+                        iconLeading={<Icon data-icon aria-hidden className="size-5 shrink-0" />}
+                        onClick={handle}
+                        aria-current={selected ? "page" : undefined}
+                    >
+                        {label}
+                    </Button>
+                );
+            })}
+        </nav>
+    );
+}
+
+function AppContent() {
+    const [tab, setTab] = useState<AppTabId>("dashboard");
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarCollapsedFromStorage);
+
+    const toggleSidebarCollapsed = () => {
+        setSidebarCollapsed((c) => {
+            const next = !c;
+            persistSidebarCollapsed(next);
+            return next;
+        });
+    };
+
+    return (
+        <div className="flex min-h-dvh flex-row overflow-x-clip bg-primary">
+            <aside
+                aria-label={t("app.menuTitle")}
+                className={cx(
+                    "hidden shrink-0 flex-col border-r border-secondary bg-primary shadow-sm transition-[width] duration-300 ease-out lg:flex",
+                    "lg:sticky lg:top-0 lg:h-dvh lg:max-h-dvh lg:self-start",
+                    sidebarCollapsed ? "w-[4.5rem]" : "w-56",
+                )}
+            >
+                <div className="h-1 shrink-0 bg-gradient-to-r from-brand-600 via-indigo-600 to-amber-500" aria-hidden />
+                <div
+                    className={cx(
+                        "flex min-h-[3.25rem] shrink-0 items-center border-b border-secondary px-3 py-2",
+                        sidebarCollapsed && "justify-center px-2",
+                    )}
+                >
+                    {sidebarCollapsed ? (
+                        <p className="text-lg font-black tracking-tight text-brand-secondary" aria-hidden>
+                            K
+                        </p>
+                    ) : (
+                        <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold uppercase tracking-wide text-brand-secondary">{t("app.name")}</p>
+                            <p className="truncate text-xs text-secondary">{t("app.tagline")}</p>
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3">
+                    {!sidebarCollapsed && (
+                        <div className="shrink-0 space-y-1">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-brand-secondary">{t("app.menuTitle")}</p>
+                        </div>
+                    )}
+                    <AppNavLinks tab={tab} onSelect={setTab} variant={sidebarCollapsed ? "rail-collapsed" : "rail-expanded"} />
+                </div>
+
+                <div className="shrink-0 border-t border-secondary p-2">
+                    <Button
+                        color="secondary"
+                        size="md"
+                        aria-label={sidebarCollapsed ? t("aria.expandAppSidebar") : t("aria.collapseAppSidebar")}
+                        className="w-full justify-center data-icon-only:rounded-xl"
+                        iconLeading={
+                            sidebarCollapsed ? (
+                                <ChevronRight data-icon aria-hidden className="size-5 shrink-0" />
+                            ) : (
+                                <ChevronLeft data-icon aria-hidden className="size-5 shrink-0" />
+                            )
+                        }
+                        onClick={toggleSidebarCollapsed}
+                    />
+                </div>
+            </aside>
+
+            <div className="flex min-w-0 flex-1 flex-col">
+                <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-secondary bg-primary/95 px-4 backdrop-blur-md supports-[backdrop-filter]:bg-primary/80 md:px-6">
+                    <div className="lg:hidden">
+                        <AriaDialogTrigger>
+                            <AriaButton
+                                aria-label={t("aria.openAppMenu")}
+                                className="group relative flex shrink-0 items-center justify-center rounded-xl bg-secondary_alt p-2.5 text-fg-secondary shadow-xs ring-1 ring-secondary ring-inset outline-focus-ring transition duration-100 ease-linear hover:bg-primary_hover hover:text-fg-secondary_hover focus-visible:outline-2 focus-visible:outline-offset-2"
+                            >
+                                <Menu02 className="size-6 transition duration-200 ease-in-out group-aria-expanded:opacity-0" aria-hidden />
+                                <CloseIcon
+                                    className="pointer-events-none absolute size-6 opacity-0 transition duration-200 ease-in-out group-aria-expanded:opacity-100"
+                                    aria-hidden
+                                />
+                            </AriaButton>
+
+                            <AriaModalOverlay
+                                isDismissable
+                                className={({ isEntering, isExiting }) =>
+                                    cx(
+                                        "fixed inset-0 z-50 cursor-pointer bg-overlay/80 backdrop-blur-[10px]",
+                                        isEntering && "duration-300 ease-out animate-in fade-in",
+                                        isExiting && "duration-200 ease-in animate-out fade-out",
+                                    )
+                                }
+                            >
+                                {({ state }) => (
+                                    <AriaModal
+                                        className={({ isEntering, isExiting }) =>
+                                            cx(
+                                                "fixed inset-0 z-50 flex h-[100dvh] max-h-[100dvh] w-full max-w-none cursor-auto flex-col overflow-hidden border-0 bg-primary shadow-none outline-hidden",
+                                                isEntering &&
+                                                    "motion-safe:duration-300 motion-safe:ease-out motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3",
+                                                isExiting &&
+                                                    "motion-safe:duration-200 motion-safe:ease-in motion-safe:animate-out motion-safe:fade-out motion-safe:slide-out-to-bottom-2",
+                                            )
+                                        }
+                                    >
+                                        <AriaDialog className="relative flex min-h-0 flex-1 flex-col outline-hidden focus:outline-hidden">
+                                            <AriaButton
+                                                aria-label={t("aria.closeAppMenu")}
+                                                onPress={() => state.close()}
+                                                className={cx(
+                                                    "absolute z-20 flex size-11 cursor-pointer items-center justify-center rounded-xl bg-secondary_alt text-fg-secondary shadow-md ring-1 ring-secondary ring-inset outline-focus-ring transition duration-100 ease-linear hover:bg-primary_hover hover:text-fg-secondary_hover focus-visible:outline-2 focus-visible:outline-offset-2",
+                                                    "right-[max(0.75rem,env(safe-area-inset-right))] top-[max(0.75rem,env(safe-area-inset-top))]",
+                                                )}
+                                            >
+                                                <CloseIcon className="size-5 shrink-0" aria-hidden />
+                                            </AriaButton>
+
+                                            <div className="h-1 shrink-0 bg-gradient-to-r from-brand-600 via-indigo-600 to-amber-500" aria-hidden />
+
+                                            <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-4 pb-10 pt-14">
+                                                <div className="space-y-2 border-b border-secondary pb-5">
+                                                    <p className="text-sm font-semibold uppercase tracking-wide text-brand-secondary">{t("app.name")}</p>
+                                                    <p className="text-display-sm font-bold tracking-tight text-primary">{t("app.menuTitle")}</p>
+                                                    <p className="text-md leading-snug text-secondary">{t("app.tagline")}</p>
+                                                </div>
+
+                                                <AppNavLinks tab={tab} onSelect={setTab} variant="drawer" closeDrawer={() => state.close()} />
+                                            </div>
+                                        </AriaDialog>
+                                    </AriaModal>
+                                )}
+                            </AriaModalOverlay>
+                        </AriaDialogTrigger>
                     </div>
-                    <div className="rounded-xl border border-white/30 bg-white/15 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-md dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold uppercase tracking-wide text-brand-secondary">{t("app.name")}</p>
+                        <p className="truncate text-md text-secondary">{t("app.tagline")}</p>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                        <FocusModeControl />
                         <ThemeToggle />
                     </div>
-                </div>
+                </header>
 
-                {/* Glass pill rail — tabs stay flush (no vertical offset) */}
-                <div className="mx-auto mt-2 max-w-6xl px-4 md:mt-3 md:px-8">
-                    <div className="rounded-full border border-white/30 bg-gradient-to-b from-white/25 to-white/10 p-1.5 shadow-[inset_0_2px_6px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-white/10 dark:from-white/[0.14] dark:to-white/[0.04] dark:shadow-[inset_0_2px_8px_rgba(255,255,255,0.06),inset_0_-1px_2px_rgba(0,0,0,0.35)]">
-                        <Tabs.List
-                            type="button-brand"
-                            size="md"
-                            fullWidth
-                            className="gap-1 rounded-full bg-transparent p-0 shadow-none ring-0 [--tw-shadow:0_0_#0000]"
-                        >
-                            <Tabs.Item id="dashboard" icon={BarChartSquare02} aria-label={t("app.tab.dashboard")} className={glassNavTabClass}>
-                                <span className="hidden md:inline">{t("app.tab.dashboard")}</span>
-                            </Tabs.Item>
-                            <Tabs.Item id="calendar" icon={CalendarIcon} aria-label={t("app.tab.calendar")} className={glassNavTabClass}>
-                                <span className="hidden md:inline">{t("app.tab.calendar")}</span>
-                            </Tabs.Item>
-                            <Tabs.Item id="wellbeing" icon={HeartRounded} aria-label={t("app.tab.wellbeing")} className={glassNavTabClass}>
-                                <span className="hidden md:inline">{t("app.tab.wellbeing")}</span>
-                            </Tabs.Item>
-                            <Tabs.Item id="events" icon={Users01} aria-label={t("app.tab.events")} className={glassNavTabClass}>
-                                <span className="hidden md:inline">{t("app.tab.events")}</span>
-                            </Tabs.Item>
-                        </Tabs.List>
-                    </div>
-                </div>
-            </header>
-
-            <main className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col overflow-hidden px-4 py-6 md:px-8 md:py-8">
-                <Tabs.Panel id="dashboard" className="outline-hidden min-h-0 flex-1 overflow-y-auto">
-                    <DashboardPanel onOpenTab={(id) => setTab(id)} />
-                </Tabs.Panel>
-                <Tabs.Panel id="calendar" className="outline-hidden min-h-0 flex-1 overflow-y-auto">
-                    <CalendarPanel />
-                </Tabs.Panel>
-                <Tabs.Panel id="wellbeing" className="outline-hidden flex min-h-0 flex-1 flex-col overflow-hidden">
-                    <WellbeingPanel />
-                </Tabs.Panel>
-                <Tabs.Panel id="events" className="outline-hidden min-h-0 flex-1 overflow-y-auto">
-                    <EventsPanel />
-                </Tabs.Panel>
-            </main>
-        </Tabs>
+                <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-5 pb-24 md:px-8 md:py-7 md:pb-8">
+                    {tab === "dashboard" && <DashboardPanel onOpenTab={(id) => setTab(id as AppTabId)} />}
+                    {tab === "calendar" && <CalendarPanel />}
+                    {tab === "wellbeing" && <WellbeingPanel />}
+                    {tab === "events" && <EventsPanel />}
+                </main>
+            </div>
+        </div>
     );
 }
 
@@ -90,8 +305,9 @@ function AppShellBody() {
 
     return (
         <>
-            <AppTabs />
-            {/* Outside <Tabs>: RAC Tabs uses CollectionBuilder on all children; a <dialog> there crashes the app. */}
+            <AppContent />
+            <QuickAddFab />
+            {/* Outside app chrome: RAC Tabs used to wrap this; keep modal sibling to avoid collection issues if tabs return. */}
             <LimitsSetupModal
                 isOpen={!limitsConfigured || limitsEditorOpen}
                 isRequired={!limitsConfigured}

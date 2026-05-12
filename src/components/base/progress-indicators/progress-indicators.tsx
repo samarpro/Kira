@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { cx } from "@/utils/cx";
 
 export interface ProgressBarProps {
@@ -35,6 +36,7 @@ export interface ProgressBarProps {
  */
 export const ProgressBarBase = ({ value, min = 0, max = 100, className, progressClassName }: ProgressBarProps) => {
     const percentage = ((value - min) * 100) / (max - min);
+    const x = `${-(100 - percentage)}%`;
 
     return (
         <div
@@ -42,12 +44,16 @@ export const ProgressBarBase = ({ value, min = 0, max = 100, className, progress
             aria-valuenow={value}
             aria-valuemin={min}
             aria-valuemax={max}
-            className={cx("h-2 w-full overflow-hidden rounded-md bg-quaternary", className)}
+            className={cx("h-3.5 w-full overflow-hidden rounded-full bg-quaternary ring-1 ring-secondary/50 ring-inset", className)}
         >
-            <div
-                // Use transform instead of width to avoid layout thrashing (and for smoother animation)
-                style={{ transform: `translateX(-${100 - percentage}%)` }}
-                className={cx("size-full rounded-md bg-fg-brand-primary transition duration-75 ease-linear", progressClassName)}
+            <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x }}
+                transition={{ type: "spring" as const, stiffness: 260, damping: 26, mass: 0.6 }}
+                className={cx(
+                    "size-full rounded-full bg-gradient-to-r from-brand-600 via-teal-400 to-emerald-500 will-change-transform",
+                    progressClassName,
+                )}
             />
         </div>
     );
@@ -80,14 +86,14 @@ export const ProgressBar = ({ value, min = 0, max = 100, valueFormatter, labelPo
             return (
                 <div className="flex items-center gap-3">
                     {baseProgressBar}
-                    <span className="shrink-0 text-sm font-medium text-secondary tabular-nums">{formattedValue}</span>
+                    <span className="text-md shrink-0 font-semibold text-secondary tabular-nums">{formattedValue}</span>
                 </div>
             );
         case "bottom":
             return (
                 <div className="flex flex-col items-end gap-2">
                     {baseProgressBar}
-                    <span className="text-sm font-medium text-secondary tabular-nums">{formattedValue}</span>
+                    <span className="text-md font-semibold text-secondary tabular-nums">{formattedValue}</span>
                 </div>
             );
         case "top-floating":
@@ -98,7 +104,7 @@ export const ProgressBar = ({ value, min = 0, max = 100, valueFormatter, labelPo
                         style={{ left: `${percentage}%` }}
                         className="absolute -top-2 -translate-x-1/2 -translate-y-full rounded-lg bg-primary_alt px-3 py-2 shadow-lg ring-1 ring-secondary_alt"
                     >
-                        <div className="text-xs font-semibold text-secondary tabular-nums">{formattedValue}</div>
+                        <div className="text-sm font-semibold text-secondary tabular-nums">{formattedValue}</div>
                     </div>
                 </div>
             );
@@ -110,7 +116,7 @@ export const ProgressBar = ({ value, min = 0, max = 100, valueFormatter, labelPo
                         style={{ left: `${percentage}%` }}
                         className="absolute -bottom-2 -translate-x-1/2 translate-y-full rounded-lg bg-primary_alt px-3 py-2 shadow-lg ring-1 ring-secondary_alt"
                     >
-                        <div className="text-xs font-semibold text-secondary">{formattedValue}</div>
+                        <div className="text-sm font-semibold text-secondary">{formattedValue}</div>
                     </div>
                 </div>
             );

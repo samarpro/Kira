@@ -2,14 +2,13 @@ import { create } from "zustand";
 import type { ScheduleEntry } from "@/components/kira/calendar-month";
 import { loadLifePriorityOrder, saveLifePriorityOrder } from "@/lib/life-priority-storage";
 import { loadUserProfile, saveUserProfile, type UserProfile } from "@/lib/profile-storage";
+import { loadScheduleEntries, saveScheduleEntries } from "@/lib/schedule-entries-storage";
+import { loadWellbeingTasks, saveWellbeingTasks } from "@/lib/wellbeing-tasks-storage";
 import type { LifePriorityId } from "@/types/life-priority";
+import type { WellbeingTask } from "@/types/wellbeing-task";
 import { isoFromDate } from "@/utils/schedule-time";
 
-export interface WellbeingTask {
-    id: string;
-    label: string;
-    completed: boolean;
-}
+export type { WellbeingTask } from "@/types/wellbeing-task";
 
 function newEntryId(): string {
     return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `e-${Date.now()}`;
@@ -63,6 +62,21 @@ function seedEntries(): ScheduleEntry[] {
     ];
 }
 
+const defaultWellbeingTasks: WellbeingTask[] = [
+    { id: "wellbeing-seed-1", label: "Hydrate before evening shift", completed: false },
+    { id: "wellbeing-seed-2", label: "Phone-free hour before sleep", completed: false },
+];
+
+function initialEntries(): ScheduleEntry[] {
+    const stored = loadScheduleEntries();
+    return stored !== null ? stored : seedEntries();
+}
+
+function initialWellbeingTasks(): WellbeingTask[] {
+    const stored = loadWellbeingTasks();
+    return stored !== null ? stored : defaultWellbeingTasks;
+}
+
 interface KiraStoreState {
     entries: ScheduleEntry[];
     wellbeingTasks: WellbeingTask[];
@@ -92,11 +106,8 @@ interface KiraStoreState {
 const initialProfile = loadUserProfile();
 
 export const useKiraStore = create<KiraStoreState>((set) => ({
-    entries: seedEntries(),
-    wellbeingTasks: [
-        { id: newWellbeingId(), label: "Hydrate before evening shift", completed: false },
-        { id: newWellbeingId(), label: "Phone-free hour before sleep", completed: false },
-    ],
+    entries: initialEntries(),
+    wellbeingTasks: initialWellbeingTasks(),
     weeklyStudyGoalMinutes: initialProfile.weeklyStudyGoalMinutes,
     fortnightWorkLimitHours: initialProfile.fortnightWorkLimitHours,
     limitsEditorOpen: false,
@@ -136,29 +147,41 @@ export const useKiraStore = create<KiraStoreState>((set) => ({
         }),
     addEntry: (entry) => {
         const id = newEntryId();
-        set((s) => ({
-            entries: [...s.entries, { ...entry, id, completed: entry.completed ?? false }],
-        }));
+        set((s) => {
+            const entries = [...s.entries, { ...entry, id, completed: entry.completed ?? false }];
+            saveScheduleEntries(entries);
+            return { entries };
+        });
         return id;
     },
     updateEntry: (id, patch) =>
-        set((s) => ({
-            entries: s.entries.map((e) => (e.id === id ? { ...e, ...patch } : e)),
-        })),
+        set((s) => {
+            const entries = s.entries.map((e) => (e.id === id ? { ...e, ...patch } : e));
+            saveScheduleEntries(entries);
+            return { entries };
+        }),
     removeEntry: (id) =>
-        set((s) => ({
-            entries: s.entries.filter((e) => e.id !== id),
-        })),
+        set((s) => {
+            const entries = s.entries.filter((e) => e.id !== id);
+            saveScheduleEntries(entries);
+            return { entries };
+        }),
     addWellbeingTask: (label) =>
-        set((s) => ({
-            wellbeingTasks: [{ id: newWellbeingId(), label, completed: false }, ...s.wellbeingTasks],
-        })),
+        set((s) => {
+            const wellbeingTasks = [{ id: newWellbeingId(), label, completed: false }, ...s.wellbeingTasks];
+            saveWellbeingTasks(wellbeingTasks);
+            return { wellbeingTasks };
+        }),
     toggleWellbeingTask: (id) =>
-        set((s) => ({
-            wellbeingTasks: s.wellbeingTasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)),
-        })),
+        set((s) => {
+            const wellbeingTasks = s.wellbeingTasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t));
+            saveWellbeingTasks(wellbeingTasks);
+            return { wellbeingTasks };
+        }),
     removeWellbeingTask: (id) =>
-        set((s) => ({
-            wellbeingTasks: s.wellbeingTasks.filter((t) => t.id !== id),
-        })),
+        set((s) => {
+            const wellbeingTasks = s.wellbeingTasks.filter((t) => t.id !== id);
+            saveWellbeingTasks(wellbeingTasks);
+            return { wellbeingTasks };
+        }),
 }));

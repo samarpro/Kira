@@ -36,17 +36,17 @@ export function CalendarPanel() {
         <div className="flex flex-col gap-6">
             <section
                 className={cx(
-                    "rounded-xl bg-primary_alt p-4 md:p-6",
-                    "ring-1 ring-secondary",
+                    "rounded-2xl bg-primary_alt p-5 md:p-6",
+                    "ring-2 ring-secondary",
                     "transition-[box-shadow,ring-color,transform] duration-300 ease-out",
                     "hover:-translate-y-px",
-                    "hover:shadow-[0_0_42px_-12px_rgba(105,56,239,0.4)] hover:ring-brand-secondary/45",
+                    "hover:shadow-[0_0_48px_-14px_rgba(13,148,136,0.45)] hover:ring-brand-secondary/55",
                     "focus-within:-translate-y-px",
-                    "focus-within:shadow-[0_0_48px_-10px_rgba(105,56,239,0.55)] focus-within:ring-brand-secondary/65",
-                    "dark:hover:shadow-[0_0_42px_-12px_rgba(167,139,250,0.35)] dark:focus-within:shadow-[0_0_48px_-10px_rgba(167,139,250,0.45)]",
+                    "focus-within:shadow-[0_0_52px_-12px_rgba(14,165,162,0.55)] focus-within:ring-brand-secondary/70",
+                    "dark:hover:shadow-[0_0_48px_-14px_rgba(45,211,191,0.35)] dark:focus-within:shadow-[0_0_52px_-12px_rgba(45,211,191,0.42)]",
                 )}
             >
-                <p className="text-xs font-semibold uppercase tracking-wide text-quaternary">{t("calendar.quickAddSectionLabel")}</p>
+                <p className="text-sm font-semibold uppercase tracking-wide text-brand-secondary">{t("calendar.quickAddSectionLabel")}</p>
                 <TextField value={title} onChange={setTitle} size="lg" className="w-full gap-1.5">
                     {({ isRequired, isInvalid }) => (
                         <>

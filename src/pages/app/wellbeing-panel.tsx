@@ -74,18 +74,22 @@ export function WellbeingPanel() {
         t(id).replace("{{pct}}", String(pct));
 
     return (
-        <div className="flex max-h-[calc(100dvh-11.5rem)] min-h-0 flex-1 flex-col gap-4 overflow-hidden md:max-h-[calc(100dvh-10rem)]">
+        <div className="flex flex-col gap-5">
             <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                    <h2 className="text-xl font-semibold text-secondary">{welcomeHeading}</h2>
-                    <p className="mt-1 max-w-2xl text-sm text-tertiary">{t("wellbeing.subtitle")}</p>
+                    <h2 className="text-display-sm font-semibold tracking-tight text-primary max-md:text-lg max-md:leading-snug">
+                        {welcomeHeading}
+                    </h2>
+                    <p className="mt-2 max-w-2xl text-md leading-relaxed text-secondary max-md:mt-1 max-md:text-xs max-md:leading-snug">
+                        {t("wellbeing.subtitle")}
+                    </p>
                 </div>
                 <Button color="link-color" size="sm" className="shrink-0 self-start sm:self-center" onClick={() => openLimitsEditor()}>
                     {t("wellbeing.editLimits")}
                 </Button>
             </div>
 
-            <div className="grid min-h-0 flex-1 grid-cols-1 items-start gap-3 justify-items-center md:grid-cols-2 md:items-stretch md:justify-items-stretch lg:grid-cols-3 lg:grid-rows-2">
+            <div className="grid grid-cols-1 items-start gap-3 justify-items-center md:grid-cols-2 md:items-stretch md:justify-items-stretch lg:grid-cols-3">
                 <GlassRadialTile
                     title={t("wellbeing.ringStudyTitle")}
                     subtitle={t("wellbeing.ringStudySubtitle")}
@@ -138,12 +142,12 @@ export function WellbeingPanel() {
                 />
 
                 <section
-                    className={cx(tasksGlass, "w-full max-w-sm min-h-0 flex-1 justify-self-center md:max-w-none md:justify-self-auto lg:self-stretch")}
+                    className={cx(tasksGlass, "w-full max-w-sm justify-self-center md:max-w-none md:justify-self-auto lg:self-stretch")}
                     aria-label={t("wellbeing.tasksTileTitle")}
                 >
                     <div className="shrink-0">
-                        <h3 className="text-xs font-semibold uppercase tracking-wide text-quaternary">{t("wellbeing.tasksTileTitle")}</h3>
-                        <p className="mt-0.5 text-xs text-tertiary">{t("wellbeing.tasksTileSubtitle")}</p>
+                        <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-secondary">{t("wellbeing.tasksTileTitle")}</h3>
+                        <p className="mt-1 text-sm leading-snug text-secondary">{t("wellbeing.tasksTileSubtitle")}</p>
                     </div>
 
                     <div className="mt-3 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-end">
@@ -163,7 +167,7 @@ export function WellbeingPanel() {
                         </Button>
                     </div>
 
-                    <ul className="mt-3 min-h-0 flex-1 space-y-0 overflow-y-auto overscroll-contain rounded-xl bg-primary/60 ring-1 ring-secondary/80 ring-inset">
+                    <ul className="mt-3 space-y-0 rounded-xl bg-primary/60 ring-1 ring-secondary/80 ring-inset">
                         {wellbeingTasks.map((item) => (
                             <li
                                 key={item.id}

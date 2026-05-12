@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from "@untitledui/icons";
 import { Button } from "@/components/base/buttons/button";
 import { cx } from "@/utils/cx";
 import { buildMonthGrid } from "@/utils/calendar-grid";
+import { scheduleKindDotClass, scheduleKindLegendSwatchClass } from "@/utils/schedule-kind-styles";
 import { t } from "@/i18n/strings";
 
 export type ScheduleKind = "shift" | "exam" | "study";
@@ -73,19 +74,13 @@ export function CalendarMonth({ cursor, onPrevMonth, onNextMonth, entries, compa
                             <span className="tabular-nums">{cell.label}</span>
                             <span className="mt-0.5 flex min-h-3 justify-center gap-0.5" aria-hidden={kinds.length === 0}>
                                 {kinds.includes("shift") && (
-                                    <span className="inline-block size-1.5 rounded-full bg-fg-brand-primary ring-1 ring-secondary" title={t("calendar.legend.shift")} />
+                                    <span className={scheduleKindDotClass("shift")} title={t("calendar.legend.shift")} />
                                 )}
                                 {kinds.includes("exam") && (
-                                    <span
-                                        className="inline-block size-1.5 rounded-sm bg-warning-solid ring-1 ring-secondary"
-                                        title={t("calendar.legend.exam")}
-                                    />
+                                    <span className={scheduleKindDotClass("exam")} title={t("calendar.legend.exam")} />
                                 )}
                                 {kinds.includes("study") && (
-                                    <span
-                                        className="inline-block size-1.5 rounded-full border-2 border-dashed border-success-solid bg-transparent"
-                                        title={t("calendar.legend.study")}
-                                    />
+                                    <span className={scheduleKindDotClass("study")} title={t("calendar.legend.study")} />
                                 )}
                             </span>
                         </div>
@@ -96,13 +91,13 @@ export function CalendarMonth({ cursor, onPrevMonth, onNextMonth, entries, compa
             {!compact && (
                 <ul className="mt-4 flex flex-wrap gap-3 text-xs text-tertiary">
                     <li className="flex items-center gap-1.5">
-                        <span className="inline-block size-2 rounded-full bg-fg-brand-primary ring-1 ring-secondary" /> {t("calendar.legend.shift")}
+                        <span className={scheduleKindLegendSwatchClass("shift")} /> {t("calendar.legend.shift")}
                     </li>
                     <li className="flex items-center gap-1.5">
-                        <span className="inline-block size-2 rounded-sm bg-warning-solid ring-1 ring-secondary" /> {t("calendar.legend.exam")}
+                        <span className={scheduleKindLegendSwatchClass("exam")} /> {t("calendar.legend.exam")}
                     </li>
                     <li className="flex items-center gap-1.5">
-                        <span className="inline-block size-2 rounded-full border-2 border-dashed border-success-solid" /> {t("calendar.legend.study")}
+                        <span className={scheduleKindLegendSwatchClass("study")} /> {t("calendar.legend.study")}
                     </li>
                 </ul>
             )}
