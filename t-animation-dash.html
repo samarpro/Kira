@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MindfulFlow - Futuristic Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;family=Atkinson+Hyperlegible+Next:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-bg {
+            background: linear-gradient(-45deg, #f2f7f2, #e6f3f3, #faf9f6, #dcece2);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .organic-shape-1 {
+            border-radius: 60% 40% 70% 30% / 40% 50% 60% 70%;
+        }
+
+        .organic-shape-2 {
+            border-radius: 40% 60% 30% 70% / 60% 30% 70% 40%;
+        }
+
+        .liquid-orb {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: rgba(74, 101, 78, 0.1);
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(74, 101, 78, 0.1);
+        }
+
+        .liquid-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(180deg, #8ba88e 0%, #4a654e 100%);
+            border-top: 2px solid rgba(255,255,255,0.3);
+            border-radius: 40% 40% 0 0;
+            animation: wave 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave {
+            from { transform: translateY(5%) scaleX(1); border-radius: 40% 60% 0 0; }
+            to { transform: translateY(0%) scaleX(1.05); border-radius: 60% 40% 0 0; }
+        }
+
+        .energy-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; filter: blur(2px); }
+            50% { opacity: 1; filter: blur(0px); }
+        }
+
+        .floating-heart {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* New Animations for Insights */
+        @keyframes morphWave {
+            0%, 100% { d: path('M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z'); }
+            50% { d: path('M0,50 Q25,70 50,50 T100,50 L100,100 L0,100 Z'); }
+        }
+
+        @keyframes slowRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes auraBreath {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+    
+        .liquid-fill-inverted {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(0deg, rgba(74, 101, 78, 0.05) 0%, #8ba88e 100%);
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            border-radius: 0 0 40% 40%;
+            animation: wave-inverted 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave-inverted {
+            from { transform: translateY(-5%) scaleX(1); border-radius: 0 0 40% 60%; }
+            to { transform: translateY(0%) scaleX(1.05); border-radius: 0 0 60% 40%; }
+        }
+</style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#4a654e",
+                      "primary-container": "#8ba88e",
+                      "secondary": "#266868",
+                      "secondary-container": "#aeeeee",
+                      "surface": "#faf9f6",
+                      "on-surface": "#1a1c1a",
+                      "outline": "#737972",
+                      "background": "#faf9f6"
+              },
+              "fontFamily": {
+                      "display": ["Plus Jakarta Sans"],
+                      "body": ["Atkinson Hyperlegible Next"],
+                      "serif": ["Georgia", "serif"]
+              },
+              "spacing": {
+                      "container-margin-mobile": "24px",
+                      "container-margin-desktop": "64px"
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="animated-bg font-body text-on-surface min-h-screen pb-32">
+<!-- Top Header -->
+<header class="px-container-margin-mobile pt-8 flex justify-between items-start">
+<div>
+<h1 class="font-display text-3xl font-bold tracking-tight text-primary">Good Morning, Alex</h1>
+<p class="font-display text-sm font-medium text-outline opacity-80 mt-1">4 tasks for your flow today</p>
+</div>
+<div class="flex gap-4">
+<button class="glass p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</button>
+<div class="w-12 h-12 rounded-full glass p-1">
+<img alt="Profile" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3XgAD3FYlOBPX4Wxd04weg-lNPWqNiJdrlNc5Dt5keXmuyxuqGw3IqzFLIkW-N0mDxWliEu3-N1xSj5y7Iu8v7Ril8aL4ynPSmApG1VTSZ-eigdTxCjsnzO9PlZadRaJ05JGCS6Mr1eB0lFQhy8_uP-3S6k9KMpyrPsu2dGVUfMEqc6h5DtHwjd7c9FYNecP5eAgF48oodVpSQIwDbsr-4Uycs8zFhzRI9W55dkFYjZUuYrMDzdQCnBSvBiEVTdJzn29gq_YcD4Y"/>
+</div>
+</div>
+</header>
+<main class="mt-12 space-y-12">
+<!-- Abstract Progress Section -->
+<section class="px-container-margin-mobile">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Work Hour: Liquid Orb -->
+<div class="flex flex-row items-end justify-center gap-8 md:gap-12">
+<!-- Weekly Orb -->
+<div class="flex flex-col items-center">
+<div class="liquid-orb w-24 h-24 mb-4 relative">
+<div class="liquid-fill" style="height: 70%;"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-display text-lg font-bold text-white drop-shadow-md">70%</span>
+</div>
+</div>
+<span class="font-display text-[10px] font-bold uppercase tracking-widest text-outline text-center">Weekly</span>
+<span class="text-xs text-outline/80 font-medium mt-1">5.5 / 8.0h</span>
+</div>
+<!-- Fortnightly Orb -->
+<div class="flex flex-col items-center">
+<div class="liquid-orb w-32 h-32 mb-4 relative ring-4 ring-primary/5">
+<div class="liquid-fill-inverted" style="height: 75%;"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-display text-xl font-bold text-primary/80">12.0h</span>
+</div>
+</div>
+<span class="font-display text-[10px] font-bold uppercase tracking-widest text-outline text-center">Fortnightly</span>
+<span class="text-xs text-outline/80 font-medium mt-1">Goal: 16.0h</span>
+</div>
+</div>
+<!-- Study Target: Energy Pulses -->
+<div class="flex flex-col items-center">
+<div class="h-[120px] flex items-end gap-3 mb-4">
+<div class="w-2 h-[40%] bg-primary/20 rounded-full"></div>
+<div class="w-2 h-[70%] bg-primary/40 rounded-full"></div>
+<div class="w-3 h-[95%] bg-primary rounded-full energy-pulse shadow-[0_0_15px_rgba(74,101,78,0.5)]"></div>
+<div class="w-2 h-[60%] bg-primary/40 rounded-full"></div>
+<div class="w-2 h-[50%] bg-primary/20 rounded-full"></div>
+</div>
+<span class="font-display text-xs font-bold uppercase tracking-widest text-outline">Energy Rank</span>
+<span class="text-caption text-outline/60 mt-1">Wednesday Peak</span>
+</div>
+<!-- Well-being: Floating Petal -->
+<div class="flex flex-col items-center">
+<div class="w-[120px] h-[120px] flex items-center justify-center mb-4 relative">
+<div class="absolute inset-0 organic-shape-1 bg-secondary-container/40 blur-xl"></div>
+<div class="floating-heart text-secondary relative">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+</div>
+<span class="font-display text-xs font-bold uppercase tracking-widest text-outline">Spirit Level</span>
+<span class="text-caption text-outline/60 mt-1">20m zen found</span>
+</div>
+</div>
+</section>
+<!-- Daily Insights Section -->
+<section class="px-container-margin-mobile">
+<h2 class="font-display text-xl font-bold mb-6 flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary rounded-full"></span> Daily Insights
+        </h2>
+<div class="grid grid-cols-1 gap-6">
+<div class="flex flex-row items-end justify-center gap-8 md:gap-12">
+<!-- Weekly Orb -->
+<div class="flex flex-col items-center">
+<div class="liquid-orb w-24 h-24 mb-4 relative">
+<div class="liquid-fill" style="height: 70%;"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-display text-lg font-bold text-white drop-shadow-md">70%</span>
+</div>
+</div>
+<span class="font-display text-[10px] font-bold uppercase tracking-widest text-outline text-center">Weekly</span>
+<span class="text-xs text-outline/80 font-medium mt-1">5.5 / 8.0h</span>
+</div>
+<!-- Fortnightly Orb -->
+<div class="flex flex-col items-center">
+<div class="liquid-orb w-32 h-32 mb-4 relative ring-4 ring-primary/5">
+<div class="liquid-fill-inverted" style="height: 75%;"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-display text-xl font-bold text-primary/80">12.0h</span>
+</div>
+</div>
+<span class="font-display text-[10px] font-bold uppercase tracking-widest text-outline text-center">Fortnightly</span>
+<span class="text-xs text-outline/80 font-medium mt-1">Goal: 16.0h</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<!-- Restoration Rings -->
+<div class="glass rounded-[2.5rem] p-6 flex flex-col items-center justify-center text-center">
+<div class="relative w-24 h-24 mb-4 flex items-center justify-center">
+<div class="absolute inset-0 border-4 border-secondary/10 rounded-full"></div>
+<div class="absolute inset-2 border-4 border-secondary/20 rounded-full"></div>
+<div class="absolute inset-4 border-4 border-secondary/30 rounded-full"></div>
+<!-- Glowing progress rings -->
+<div class="absolute inset-0 border-4 border-transparent border-t-secondary rounded-full shadow-[0_0_15px_rgba(38,104,104,0.3)]" style="animation: slowRotate 4s linear infinite"></div>
+<div class="absolute inset-2 border-4 border-transparent border-r-secondary/60 rounded-full" style="animation: slowRotate 6s linear infinite reverse"></div>
+<div class="absolute inset-4 border-4 border-transparent border-b-secondary/40 rounded-full" style="animation: slowRotate 8s linear infinite"></div>
+<span class="material-symbols-outlined text-secondary">eco</span>
+</div>
+<span class="font-display text-xs font-bold uppercase tracking-widest text-outline">Restoration</span>
+</div>
+<!-- Vitality Score -->
+<div class="glass rounded-[2.5rem] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
+<div class="absolute w-24 h-24 bg-primary/10 rounded-full blur-2xl" style="animation: auraBreath 4s ease-in-out infinite"></div>
+<div class="relative z-10 flex items-baseline justify-center">
+<span class="font-serif text-5xl font-light text-primary">92</span>
+<span class="text-xs text-primary/60 ml-1 font-bold">VPT</span>
+</div>
+<span class="font-display text-xs font-bold uppercase tracking-widest text-outline mt-4">Vitality Score</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Dynamic Timeline & Recommended -->
+<div class="flex flex-col gap-12">
+<!-- Today at a Glance: Expanding Timeline -->
+<section class="px-container-margin-mobile">
+<h2 class="font-display text-xl font-bold mb-6 flex items-center gap-2">
+<span class="w-2 h-2 bg-primary rounded-full"></span> Today's Rhythm
+            </h2>
+<div class="space-y-4">
+<!-- Timeline Item 1 -->
+<div class="glass p-6 rounded-[2rem] organic-shape-1 group hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<span class="font-display font-bold text-primary">09:00</span>
+<div>
+<h3 class="font-display font-bold text-lg leading-none">Morning Yoga</h3>
+<p class="text-sm text-outline mt-1 group-hover:block hidden">Sanctuary Room • Breathe and align your focus for the day.</p>
+<p class="text-sm text-outline mt-1 group-hover:hidden">Sanctuary Room</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:rotate-90 transition-transform">arrow_forward_ios</span>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="glass p-6 rounded-[2rem] organic-shape-2 group hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<span class="font-display font-bold text-primary">11:30</span>
+<div>
+<h3 class="font-display font-bold text-lg leading-none">Group Study</h3>
+<p class="text-sm text-outline mt-1">Library Wing B • Biology</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">arrow_forward_ios</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recommended: Horizontal Carousel -->
+<section>
+<div class="px-container-margin-mobile flex justify-between items-center mb-6">
+<h2 class="font-display text-xl font-bold">Curated for You</h2>
+<button class="text-xs font-bold uppercase tracking-widest text-primary">Explore</button>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar gap-6 px-container-margin-mobile pb-4">
+<!-- Premium Card 1 -->
+<div class="flex-none w-[280px] h-[380px] relative rounded-[3rem] overflow-hidden group">
+<img alt="Meditation" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5Xw2_3FSGLj8tDd1Evmxpw9jIVvqjxbwwxF58u9ikQ-LQ3PBgMStg1RJm3JsTpx4lp1W1tVtGK5tQwKQNI4lt9U769dV7X80L1W5TCss8nPFeytg0hdClSByKjFsKzjbh8LNWJr208kJr6443196Gka5VDPOgZVCQVTdbMQsrZH2PuOM9iSOHe3NMT5KY0wW7wGWBj7NrVpsDobAbWdvuJwbd0b5y4AIOWn-YI3THguTZqmKp7gTIxDKnegwXGodyXB3iPZYGck0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-8">
+<span class="text-[10px] font-bold uppercase tracking-widest text-white/70 mb-2 block">Mindfulness</span>
+<h4 class="font-display text-xl font-bold text-white">5-Min Brain Break</h4>
+<button class="mt-4 glass text-white text-xs font-bold py-2 px-4 rounded-full border-white/30">Start Flow</button>
+</div>
+</div>
+<!-- Premium Card 2 -->
+<div class="flex-none w-[280px] h-[380px] relative rounded-[3rem] overflow-hidden group">
+<img alt="Desk" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbCmxZUJ0uSJHSkr4_Eaz41bPpr8i_Wgcc9BXVIfaeTTEMQOCiO0Mi6bP_C5bzgqq1IoKfF8d8TeP1M0S8Nn-LDKPL5Az2-hIqKdxz__rE4_3GwXEf-jAwClcgZNVTPRQx5t9zqMhe4iyxe2fAF4F2kB3nzDdgbG5tYjqHNNdbmEEBs2kmOk_j72ACH7pbM0meuDunwdia-ojmIGTkBmrrJgBWbomcvb9H-X8m_tYYnukLi_GvzAsoorFOBs-g_mogUcj_7Km9AM4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-8">
+<span class="text-[10px] font-bold uppercase tracking-widest text-white/70 mb-2 block">Reflection</span>
+<h4 class="font-display text-xl font-bold text-white">Weekly Review</h4>
+<button class="mt-4 glass text-white text-xs font-bold py-2 px-4 rounded-full border-white/30">Resume</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] max-w-md z-50">
+<div class="glass rounded-full py-3 px-6 flex justify-between items-center shadow-2xl border-white/20">
+<button class="flex items-center justify-center w-12 h-12 bg-primary text-white rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</button>
+<button class="flex items-center justify-center w-12 h-12 text-outline/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">auto_stories</span>
+</button>
+<button class="flex items-center justify-center w-12 h-12 text-outline/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">check_circle</span>
+</button>
+<button class="flex items-center justify-center w-12 h-12 text-outline/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</nav>
+</body></html>
